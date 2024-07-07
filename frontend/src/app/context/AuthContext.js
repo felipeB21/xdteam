@@ -38,10 +38,8 @@ export const AuthProvider = ({ children }) => {
           }
         );
         setData(response.data);
-        console.log(response.data);
       } catch (error) {
         setData(null);
-        console.log(error);
       }
     };
 

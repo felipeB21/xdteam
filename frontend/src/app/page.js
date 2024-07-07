@@ -1,3 +1,4 @@
+import HeroInfo from "@/components/heroInfo";
 import RefreshToken from "@/components/server/refreshToken";
 import Image from "next/image";
 
@@ -46,14 +47,7 @@ export default function Home() {
               />
             </div>
           </div>
-          <div className="md:mt-24">
-            <h4 className="lg:text-3xl md:text-2xl text-xl font-bold mb-3">
-              Join our community
-            </h4>
-            <div className="bg-neutral-950 py-3 px-6 border border-neutral-700 rounded-2xl w-max">
-              <p className="font-medium">Users: </p>
-            </div>
-          </div>
+          <HeroInfo />
         </div>
         <div>
           <p>ffsdf</p>

@@ -145,7 +145,14 @@ export const verifyToken = async (req, res) => {
     return res.json({ username: user.username });
   } catch (error) {
     console.error("Error verifying token:", error);
+
+    if (error.name === "TokenExpiredError") {
+      return res.status(403).json({ message: "Token expired" }); // Token expirado
+    }
+
     return res.sendStatus(403); // Forbidden
+  } finally {
+    await prisma.$disconnect();
   }
 };
 
@@ -190,11 +197,6 @@ export const logoutUser = async (req, res) => {
       return res.sendStatus(204);
     }
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { refreshToken: null },
-    });
-
     res.clearCookie("jwt", {
       httpOnly: true,
       secure: true,
@@ -232,6 +234,44 @@ export const userData = async (req, res) => {
     return res.status(200).json({ data: userWithoutSensitiveFields });
   } catch (error) {
     console.error("Error fetching user data:", error);
+    return res.status(500).json({ msg: "Internal Server Error" });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
+export const findUserByParams = async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { username },
+      select: {
+        id: true,
+        username: true,
+        team: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    return res.status(200).json({ data: user });
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return res.status(500).json({ msg: "Internal Server Error" });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+export const intOfUsers = async (req, res) => {
+  try {
+    const userCount = await prisma.user.count();
+    if (!userCount) return res.status(201).json({ msg: "No user founded" });
+    return res.status(200).json({ count: userCount });
+  } catch (error) {
+    console.error("Error fetching user count:", error);
     return res.status(500).json({ msg: "Internal Server Error" });
   } finally {
     await prisma.$disconnect();

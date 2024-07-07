@@ -6,14 +6,12 @@ import UserOptionHeader from "./userOptionHeader";
 import LoginIcon from "./icons/login";
 
 export default function AlterSessionHeader() {
-  const { data } = useContext(AuthContext);
-  console.log(data);
+  const { user } = useContext(AuthContext);
   return (
     <div>
-      {data ? (
+      {user ? (
         <div className="flex items-center gap-3 py-0.5">
-          {data.data.team ? <p>{data.data.team.img}</p> : "no team"}
-          <strong>{data.data.username}</strong>
+          <strong>{user}</strong>
           <div className="mt-1">
             <UserOptionHeader />
           </div>

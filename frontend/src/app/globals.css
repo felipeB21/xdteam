@@ -12,10 +12,10 @@ body {
   @apply bg-neutral-700 text-white w-full;
 }
 input {
-  @apply text-black border-none outline-none p-2;
+  @apply text-black border-none outline-none p-3;
 }
 .btn-form {
-  @apply p-2 w-full bg-sky-600 hover:bg-sky-700;
+  @apply p-3 w-full bg-sky-600 hover:bg-sky-700;
 }
 .main-layout {
   @apply max-w-7xl mx-auto px-20 mt-24;
