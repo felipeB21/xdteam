@@ -136,6 +136,7 @@ export const verifyToken = async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    if (!decoded) return res.sendStatus(400);
     const user = await prisma.user.findUnique({
       where: { username: decoded.username },
     });

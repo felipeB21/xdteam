@@ -2,6 +2,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import Image from "next/image";
 
 export default function UserPage({ params }) {
   const [userData, setUserData] = useState(null);
@@ -28,7 +29,6 @@ export default function UserPage({ params }) {
         }
       } catch (error) {
         setUserData(null);
-        console.error("Error fetching user data:", error);
       } finally {
         setIsLoading(false);
       }
@@ -45,11 +45,20 @@ export default function UserPage({ params }) {
         </div>
       ) : userData ? (
         <div>
-          <p className="text-xl font-bold">{userData.data.username}</p>
+          <p className="text-2xl font-bold">{userData.data.username}</p>
           {isCurrentUser ? <p>Es tu cuenta</p> : <p>No es tu cuenta</p>}
           {userData.data.team && (
-            <div>
-              <p>Team: {userData.data.team.name}</p>
+            <div className="mt-10">
+              <h4 className="text-2xl font-bold">Team</h4>
+              <div className="border-2 border-neutral-700 w-max py-4 px-12 mt-2 rounded-xl">
+                <p className="text-xl font-medium">{userData.data.team.name}</p>
+                <Image
+                  src={userData.data.team.img}
+                  alt={`Image of team ${userData.data.team.name}`}
+                  width={200}
+                  height={200}
+                />
+              </div>
             </div>
           )}
         </div>

@@ -4,9 +4,13 @@ import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
 
 export const createNewTeam = async (req, res) => {
-  const { name, img, region } = req.body;
+  const { name, region } = req.body;
 
-  // Extraer y decodificar el token JWT del encabezado de autorización
+  const img = req.file ? req.file.path : null;
+
+  if (!img) return res.status(400).json({ msg: "Invalid img" });
+
+  // Extract and decode the JWT token from the authorization header
   const token = req.headers["authorization"]?.split(" ")[1];
   if (!token) {
     return res.status(401).json({ msg: "No token, authorization denied" });
@@ -23,8 +27,8 @@ export const createNewTeam = async (req, res) => {
     return res.status(401).json({ msg: "Token is not valid" });
   }
 
-  // Validar entradas
-  if (!name || !img || !region) {
+  // Validate inputs
+  if (!name || !region) {
     return res.status(400).json({ msg: "All inputs are required!" });
   }
 
@@ -34,19 +38,8 @@ export const createNewTeam = async (req, res) => {
     });
   }
 
-  const validImageFormats = ["jpg", "jpeg", "png", "gif"];
-  const imgFormat = img.split(".").pop().toLowerCase();
-
-  if (!validImageFormats.includes(imgFormat)) {
-    return res.status(400).json({
-      msg:
-        "Invalid image format. Allowed formats are: " +
-        validImageFormats.join(", "),
-    });
-  }
-
   try {
-    // Verificar si el usuario ya está en un equipo
+    // Check if the user already belongs to a team
     const existingUser = await prisma.user.findUnique({
       where: { username },
     });
@@ -57,7 +50,7 @@ export const createNewTeam = async (req, res) => {
       });
     }
 
-    // Verificar si el nombre del equipo ya está en uso
+    // Check if the team name is already in use
     const existingTeam = await prisma.team.findUnique({
       where: { name },
     });
@@ -66,16 +59,16 @@ export const createNewTeam = async (req, res) => {
       return res.status(400).json({ msg: "The team name is already in use." });
     }
 
-    // Crear el nuevo equipo
+    // Create the new team with the Cloudinary URL
     const team = await prisma.team.create({
       data: {
         name,
-        img,
+        img: req.file.path, // Cloudinary URL is automatically saved here
         region,
       },
     });
 
-    // Actualizar al usuario para asignarlo al nuevo equipo
+    // Update the user to assign them to the new team
     const updatedUser = await prisma.user.update({
       where: { username },
       data: { teamId: team.id },

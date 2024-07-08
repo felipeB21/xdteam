@@ -30,14 +30,14 @@ const Login = () => {
         { withCredentials: true }
       ); // Importante para enviar y recibir cookies
       if (response.status === 200) {
-        setMessage(<span style={{ color: "green" }}>{response.data.msg}</span>);
+        setMessage("");
       } else {
         setMessage(response.data.msg);
       }
       localStorage.setItem("accessToken", response.data.data); // Guardar el access token en localStorage
       setUser(username); // Actualizar el contexto con el nombre de usuario
     } catch (error) {
-      setMessage(error.response.data?.msg || "Login failed, try again.");
+      setMessage(error.response?.data?.msg || "Login failed, try again.");
     }
   };
 
