@@ -3,14 +3,13 @@ import { AuthContext } from "@/app/context/AuthContext";
 import React, { useContext } from "react";
 import Link from "next/link";
 import UserOptionHeader from "./userOptionHeader";
-import LoginIcon from "./icons/login";
 
 export default function AlterSessionHeader() {
   const { user } = useContext(AuthContext);
   return (
     <div>
       {user ? (
-        <div className="flex items-center gap-3 py-0.5">
+        <div className="flex items-center gap-3 py-1">
           <strong>{user}</strong>
           <div className="mt-1">
             <UserOptionHeader />
@@ -19,10 +18,9 @@ export default function AlterSessionHeader() {
       ) : (
         <Link
           href={"/login"}
-          className="py-1 px-2 rounded bg-sky-600 flex items-center gap-2 hover:bg-sky-700 duration-150"
+          className="py-[7px] px-3 rounded bg-neutral-700 border border-neutral-600 flex items-center gap-2 hover:bg-neutral-600 duration-150"
         >
-          <LoginIcon />
-          <p className="font-medium">Sign in</p>
+          <p className="font-medium text-sm">Sign in / Sign up</p>
         </Link>
       )}
     </div>

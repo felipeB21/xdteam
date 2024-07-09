@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Dropdown from "./dropdown";
 
 export default function CreateTeamForm() {
   const [teamName, setTeamName] = useState("");
@@ -22,6 +23,7 @@ export default function CreateTeamForm() {
           value={teamName}
           onChange={(e) => setTeamName(e.target.value)}
         />
+        <Dropdown />
         <h4>Team Image:</h4>
         <div className="w-full flex items-center">
           <label

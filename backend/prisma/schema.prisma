@@ -28,9 +28,13 @@ model Team {
   id       String    @id @default(auto()) @map("_id") @db.ObjectId
   name     String    @unique
   players  User[]
+  isPublic Boolean   @default(true)
+  leaderUsername String?
   region   String
   img      String
   comments Comment[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 model Comment {
@@ -38,4 +42,5 @@ model Comment {
   comment  String
   team     Team     @relation(fields: [teamId], references: [id])
   teamId   String   @db.ObjectId
+  createdAt    DateTime  @default(now())
 }
