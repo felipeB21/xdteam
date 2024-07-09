@@ -8,12 +8,13 @@ export const createNewTeam = async (req, res) => {
 
   const img = req.file ? req.file.path : null;
 
-  if (!img) return res.status(400).json({ msg: "Invalid img" });
+  if (!img)
+    return res.status(400).json({ msg: "Invalid image, try another one." });
 
   // Extract and decode the JWT token from the authorization header
   const token = req.headers["authorization"]?.split(" ")[1];
   if (!token) {
-    return res.status(401).json({ msg: "No token, authorization denied" });
+    return res.status(401).json({ msg: "No token, authorization denied." });
   }
 
   let username;
@@ -21,10 +22,10 @@ export const createNewTeam = async (req, res) => {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     username = decoded.username;
     if (!username) {
-      throw new Error("Username not found in token");
+      throw new Error("Username not found in token.");
     }
   } catch (error) {
-    return res.status(401).json({ msg: "Token is not valid" });
+    return res.status(401).json({ msg: "Token is not valid." });
   }
 
   // Validate inputs
@@ -52,7 +53,7 @@ export const createNewTeam = async (req, res) => {
 
     if (existingUser.teamId) {
       return res.status(400).json({
-        msg: "User already belongs to a team. Cannot create another team.",
+        msg: "You already belong to a team. Cannot create another team.",
       });
     }
 

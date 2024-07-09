@@ -32,7 +32,7 @@ export default function RegisterForm() {
         { withCredentials: true }
       ); // Importante para enviar y recibir cookies
       if (response.status === 200) {
-        setMessage(<span style={{ color: "green" }}>{response.data.msg}</span>);
+        setMessage("");
       } else {
         setMessage(response.data.msg);
       }

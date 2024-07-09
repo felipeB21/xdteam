@@ -1,5 +1,7 @@
+import GlobeIcon from "@/components/icons/globe";
 import LockClose from "@/components/icons/lockClose";
 import LockOpen from "@/components/icons/lockOpen";
+import UserIcon from "@/components/icons/user";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,43 +13,47 @@ export default async function FindTeamPage() {
   return (
     <div className="main-layout">
       <h2 className="text-3xl font-bold mb-5">XDTeam's</h2>
-      <ul className="grid">
+      <ul className="grid grid-cols-4">
         {teams.map((team) => (
           <Link
-            className="border-2 border-neutral-700 py-2 px-4 w-max rounded-xl bg-neutral-900 hover:bg-neutral-950 duration-100"
+            className="border border-neutral-700 py-2 px-4 w-max rounded-xl hover:bg-neutral-900 duration-200"
             key={team.id}
             href={`/team/${team.id}/${team.name}`}
           >
-            <div>
-              <h3 className="text-xl font-bold">{team.name}</h3>
-              <h4 className="text-xs text-neutral-400">{team.region} Region</h4>
-            </div>
-            <Image
-              priority
-              className="my-2 rounded-lg w-auto h-auto object-cover"
-              src={team.img}
-              alt={`Img of team ${team.name}`}
-              width={200}
-              height={200}
-            />
-            <div>
-              <h5 className="font-medium text-sm text-neutral-400">
-                {team.players.length}{" "}
-                {team.players.length === 1 ? "Player" : "Players"} {""}
-                in the team
-              </h5>
-              <div className="text-sm text-neutral-400">
-                {team.isPublic === true ? (
-                  <div className="flex items-center gap-1">
-                    <LockOpen />
-                    <p>Public</p>
+            <div className="flex items-center gap-2">
+              <Image
+                priority
+                className="rounded-full w-[80px] h-[80px] object-cover"
+                src={team.img}
+                alt={`Img of team ${team.name}`}
+                width={80}
+                height={80}
+              />
+              <div>
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-xl font-bold max-w-[100px]">
+                    {team.name}
+                  </h3>
+                  <h4 className="text-xs text-neutral-400 flex items-center gap-1">
+                    <GlobeIcon /> {team.region}
+                  </h4>
+                  <h5 className="text-xs text-neutral-400 flex items-center gap-1">
+                    <UserIcon /> Players: {team.players.length}
+                  </h5>
+                  <div className="text-xs text-neutral-400">
+                    {team.isPublic === true ? (
+                      <div className="flex items-center gap-1">
+                        <LockOpen />
+                        <p>Public</p>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <LockClose />
+                        <p>Private</p>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="flex items-center gap-1">
-                    <LockClose />
-                    <p>Private</p>
-                  </div>
-                )}
+                </div>
               </div>
             </div>
           </Link>

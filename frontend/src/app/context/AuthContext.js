@@ -7,44 +7,79 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [data, setData] = useState(null);
 
-  useEffect(() => {
-    const checkLoggedIn = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        try {
-          const response = await axios.get(
-            "http://localhost:4000/api/v1/user/verify",
-            {
-              headers: { Authorization: `Bearer ${token}` },
+  const refreshAccessToken = async () => {
+    try {
+      const response = await axios.post("http://localhost:4000/refresh", null, {
+        withCredentials: true,
+      });
+      const { accessToken } = response.data;
+      localStorage.setItem("accessToken", accessToken);
+      return accessToken;
+    } catch (error) {
+      setUser(null);
+      return null;
+    }
+  };
+
+  const checkLoggedIn = async () => {
+    let token = localStorage.getItem("accessToken");
+    if (token) {
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/api/v1/user/verify",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setUser(response.data.username);
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          token = await refreshAccessToken();
+          if (token) {
+            try {
+              const response = await axios.get(
+                "http://localhost:4000/api/v1/user/verify",
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              );
+              setUser(response.data.username);
+            } catch (error) {
+              setUser(null);
             }
-          );
-          setUser(response.data.username);
-        } catch (error) {
+          } else {
+            setUser(null);
+          }
+        } else {
           setUser(null);
         }
       }
-    };
+    }
+  };
 
+  const userData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:4000/api/v1/user/data",
+        {
+          withCredentials: true,
+        }
+      );
+      setData(response.data);
+    } catch (error) {
+      setData(null);
+    }
+  };
+
+  useEffect(() => {
     checkLoggedIn();
   }, []);
 
   useEffect(() => {
-    const userData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:4000/api/v1/user/data",
-          {
-            withCredentials: true,
-          }
-        );
-        setData(response.data);
-      } catch (error) {
-        setData(null);
-      }
-    };
-
-    userData();
-  }, []);
+    if (user) {
+      userData();
+    }
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, setUser, data, setData }}>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
 
 const options = [
@@ -9,7 +9,13 @@ const options = [
   { value: "Africa", label: "Africa" },
 ];
 
-export default function Dropdown() {
+export default function Dropdown({ setRegion, dropdownId }) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -20,16 +26,16 @@ export default function Dropdown() {
     }),
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isSelected ? "#fff" : null, // Cambiar el color de fondo de las opciones a blanco cuando está seleccionada
-      color: state.isSelected ? "#333" : "#fff", // Cambiar el color del texto a blanco cuando está seleccionada
+      backgroundColor: state.isSelected ? "#fff" : null,
+      color: state.isSelected ? "#333" : "#fff",
       "&:hover": {
-        backgroundColor: state.isSelected ? "#fff" : "#222", // Cambiar el color de fondo al pasar el cursor sobre las opciones
-        color: state.isSelected ? "#333" : "#fff", // Cambiar el color del texto al pasar el cursor sobre las opciones
+        backgroundColor: state.isSelected ? "#fff" : "#222",
+        color: state.isSelected ? "#333" : "#fff",
       },
     }),
     singleValue: (provided, state) => ({
       ...provided,
-      color: state.isDisabled ? "#ccc" : "#fff", // Color del texto cuando está seleccionado
+      color: state.isDisabled ? "#ccc" : "#fff",
     }),
     menu: (provided, state) => ({
       ...provided,
@@ -38,10 +44,23 @@ export default function Dropdown() {
     }),
   };
 
+  const handleChange = (selectedOption) => {
+    setRegion(selectedOption.value);
+  };
+
+  if (!isClient) {
+    return null; // No renderizar en el servidor
+  }
+
   return (
     <div>
       <h4 className="mb-3">Select a region:</h4>
-      <Select styles={customStyles} options={options} />
+      <Select
+        inputId={dropdownId}
+        styles={customStyles}
+        options={options}
+        onChange={handleChange}
+      />
     </div>
   );
 }
