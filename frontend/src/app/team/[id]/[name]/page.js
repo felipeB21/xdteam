@@ -19,7 +19,7 @@ export default function TeamPage({ params }) {
     const fetchTeamData = async () => {
       try {
         const team = await axios.get(
-          `http://localhost:4000/api/v1/team/${params.name}`
+          `http://localhost:4000/api/v1/team/search/${params.name}`
         );
 
         if (team) {
@@ -56,12 +56,14 @@ export default function TeamPage({ params }) {
         <div>
           <div className="flex gap-10">
             <Image
-              priority
-              className="w-auto h-auto rounded-lg"
+              className="w-[200px] h-[200px] object-cover rounded-lg"
               src={teamData.data.img}
               alt={teamData.data.name}
               width={200}
               height={200}
+              placeholder="blur"
+              blurDataURL={teamData.data.img}
+              priority={true}
             />
             <div>
               <h2 className="text-3xl font-bold">{teamData.data.name}</h2>

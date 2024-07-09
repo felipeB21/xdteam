@@ -4,8 +4,10 @@ import axios from "axios";
 import Dropdown from "./dropdown";
 import GlobeIcon from "../icons/globe";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function CreateTeamForm() {
+  const router = useRouter();
   const [teamName, setTeamName] = useState("");
   const [region, setRegion] = useState("");
   const [teamImage, setTeamImage] = useState(null);
@@ -35,6 +37,7 @@ export default function CreateTeamForm() {
         }
       );
       setMessage(res.data.msg);
+      router.push(`/team/${res.data.data.team.id}/${res.data.data.team.name}`);
     } catch (error) {
       setMessage(error.response?.data?.msg || "Error creating team");
     }
@@ -113,6 +116,7 @@ export default function CreateTeamForm() {
               </div>
               <input
                 id="img"
+                accept="image/jpeg, image/png, image/gif"
                 type="file"
                 className="hidden"
                 onChange={handleImageChange}

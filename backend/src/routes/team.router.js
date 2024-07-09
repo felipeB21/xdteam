@@ -9,12 +9,14 @@ import {
   getAllTeams,
   deleteTeam,
   getTeamByName,
+  intOfTeams,
 } from "../controller/team.controller.js";
 
 router.post("/create", verifyJWT, upload.single("img"), createNewTeam);
 router.get("/leave", verifyJWT, leaveTeam);
 router.get("/all", getAllTeams);
-router.get("/:name", getTeamByName);
+router.get("/search/:name", getTeamByName);
+router.get("/length", intOfTeams);
 router.delete("/delete/:name", verifyJWT, deleteTeam);
 
 export default router;

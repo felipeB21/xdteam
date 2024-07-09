@@ -47,10 +47,9 @@ export default function Home() {
               />
             </div>
           </div>
-          <HeroInfo />
         </div>
         <div>
-          <p>ffsdf</p>
+          <HeroInfo />
         </div>
       </div>
     </main>

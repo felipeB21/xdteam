@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
+import mime from "mime-types";
 
 const prisma = new PrismaClient();
 
@@ -66,6 +67,14 @@ export const createNewTeam = async (req, res) => {
       return res.status(400).json({ msg: "The team name is already in use." });
     }
 
+    const mimeType = mime.lookup(img);
+    const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+
+    if (!validImageTypes.includes(mimeType)) {
+      return res.status(400).json({
+        msg: "Invalid image format. Please upload a JPEG, PNG, or GIF image.",
+      });
+    }
     // Create the new team with the Cloudinary URL
     const team = await prisma.team.create({
       data: {
@@ -265,6 +274,19 @@ export const getTeamByName = async (req, res) => {
     return res.status(200).json({ data: team });
   } catch (error) {
     console.error("Error fetching team:", error);
+    return res.status(500).json({ msg: "Internal Server Error" });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
+export const intOfTeams = async (req, res) => {
+  try {
+    const teamCount = await prisma.team.count();
+    if (!teamCount) return res.status(201).json({ msg: "No team founded" });
+    return res.status(200).json({ count: teamCount });
+  } catch (error) {
+    console.error("Error fetching team count:", error);
     return res.status(500).json({ msg: "Internal Server Error" });
   } finally {
     await prisma.$disconnect();
