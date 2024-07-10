@@ -140,7 +140,6 @@ export const verifyToken = async (req, res) => {
     const user = await prisma.user.findUnique({
       where: { username: decoded.username },
     });
-
     if (!user) return res.sendStatus(404); // User not found
 
     return res.json({ username: user.username });

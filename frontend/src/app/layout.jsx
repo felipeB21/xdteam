@@ -2,6 +2,7 @@ import "./globals.css";
 import Header from "@/components/header";
 import AuthContextProvider from "@/components/AuthProvider";
 import { Poppins } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Poppins({
   subsets: ["latin"],
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
+        <NextTopLoader height={2} speed={500} showSpinner={false} />
         <AuthContextProvider>
           <Header />
           {children}

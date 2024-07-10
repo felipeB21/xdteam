@@ -9,9 +9,13 @@ export const AuthProvider = ({ children }) => {
 
   const refreshAccessToken = async () => {
     try {
-      const response = await axios.post("http://localhost:4000/refresh", null, {
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        "http://localhost:4000/api/v1/user/refresh",
+        null,
+        {
+          withCredentials: true,
+        }
+      );
       const { accessToken } = response.data;
       localStorage.setItem("accessToken", accessToken);
       return accessToken;
@@ -33,7 +37,7 @@ export const AuthProvider = ({ children }) => {
         );
         setUser(response.data.username);
       } catch (error) {
-        if (error.response && error.response.status === 403) {
+        if (error.response && error.response.data.code === "TOKEN_EXPIRED") {
           token = await refreshAccessToken();
           if (token) {
             try {
@@ -46,12 +50,14 @@ export const AuthProvider = ({ children }) => {
               setUser(response.data.username);
             } catch (error) {
               setUser(null);
+              console.error("Failed to verify token after refresh:", error);
             }
           } else {
             setUser(null);
           }
         } else {
           setUser(null);
+          console.error("Failed to verify token:", error);
         }
       }
     }

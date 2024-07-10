@@ -147,9 +147,9 @@ export default function CreateTeamForm() {
               <Image
                 src={imageUrl}
                 alt="Team Image"
-                width={100}
-                height={100}
-                className="rounded-lg w-auto h-auto"
+                width={300}
+                height={300}
+                className="rounded-lg w-[300px] h-[300px] object-cover"
                 priority
               />
             </div>
