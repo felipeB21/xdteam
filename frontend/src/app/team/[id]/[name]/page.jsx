@@ -1,5 +1,6 @@
 "use client";
 import axios from "axios";
+import Head from "next/head";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -54,6 +55,10 @@ export default function TeamPage({ params }) {
         </div>
       ) : teamData ? (
         <div>
+          <Head>
+            <title>XDTeam - {teamData.data.name}</title>
+            <meta property="og:title" content="XDTeam" key="title" />
+          </Head>
           <div className="flex gap-10">
             <Image
               className="w-[200px] h-[200px] object-cover rounded-lg"
@@ -67,10 +72,10 @@ export default function TeamPage({ params }) {
             />
             <div>
               <h2 className="text-3xl font-bold">{teamData.data.name}</h2>
-              <p className="flex items-center gap-1 text-neutral-300">
+              <p className="flex items-center gap-1 text-neutral-300 text-sm">
                 <GlobeIcon /> {teamData.data.region}
               </p>
-              <div className="text-neutral-300">
+              <div className="text-neutral-300 text-sm">
                 {teamData.data.isPublic === true ? (
                   <div className="flex items-center gap-1">
                     <LockOpen />

@@ -6,6 +6,10 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 
+export const metadata = {
+  title: "XDTeam - Teams",
+};
+
 export default async function FindTeamPage() {
   const getTeams = await axios.get("http://localhost:4000/api/v1/team/all");
   const teams = getTeams.data.data || [];
@@ -13,10 +17,10 @@ export default async function FindTeamPage() {
   return (
     <div className="main-layout">
       <h2 className="text-3xl font-bold mb-5">XDTeam's</h2>
-      <ul className="grid grid-cols-4">
+      <ul className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-5">
         {teams.map((team) => (
           <Link
-            className="border border-neutral-700 py-2 px-4 w-max rounded-xl hover:bg-neutral-900 duration-200"
+            className="border border-neutral-700 py-2 px-4 rounded-xl hover:bg-neutral-900 duration-200"
             key={team.id}
             href={`/team/${team.id}/${team.name}`}
           >
@@ -26,8 +30,8 @@ export default async function FindTeamPage() {
                 className="rounded-full w-[80px] h-[80px] object-cover"
                 src={team.img}
                 alt={`Img of team ${team.name}`}
-                width={80}
-                height={80}
+                width={82}
+                height={62}
               />
               <div>
                 <div className="flex flex-col gap-1">

@@ -41,12 +41,12 @@ export default function HeroInfo() {
       <div className="grid grid-cols-2">
         <div className="bg-neutral-950 py-4 px-8 border border-neutral-700 rounded-2xl w-max">
           <p className="font-bold text-xl">
-            Users: <CountUp end={userCount} duration={2.5} />
+            Users: <CountUp end={userCount} duration={2} />
           </p>
         </div>
         <div className="bg-neutral-950 py-4 px-8 border border-neutral-700 rounded-2xl w-max">
           <p className="font-bold text-xl">
-            Teams: <CountUp end={teamCount} duration={2.5} />
+            Teams: <CountUp end={teamCount} duration={2} />
           </p>
         </div>
       </div>

@@ -1,18 +1,39 @@
 import { PrismaClient } from "@prisma/client";
+import { v2 as cloudinary } from "cloudinary";
 import jwt from "jsonwebtoken";
 import mime from "mime-types";
 
 const prisma = new PrismaClient();
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 export const createNewTeam = async (req, res) => {
   const { name, region } = req.body;
 
-  const img = req.file ? req.file.path : null;
+  // Validar campos obligatorios
+  if (!name || !region || !req.file) {
+    return res.status(400).json({ msg: "All inputs are required!" });
+  }
 
-  if (!img)
-    return res.status(400).json({ msg: "Invalid image, try another one." });
+  // Validar longitud del nombre del equipo
+  if (name.length < 3) {
+    return res.status(400).json({
+      msg: "The team name must be 3 or more characters long!",
+    });
+  }
 
-  // Extract and decode the JWT token from the authorization header
+  // Validar tipo de dato del nombre del equipo
+  if (typeof name !== "string") {
+    return res.status(400).json({
+      msg: "The team name must be a string!",
+    });
+  }
+
+  // Extraer y decodificar el token JWT del encabezado de autorización
   const token = req.headers["authorization"]?.split(" ")[1];
   if (!token) {
     return res.status(401).json({ msg: "No token, authorization denied." });
@@ -29,25 +50,8 @@ export const createNewTeam = async (req, res) => {
     return res.status(401).json({ msg: "Token is not valid." });
   }
 
-  // Validate inputs
-  if (!name || !region || !img) {
-    return res.status(400).json({ msg: "All inputs are required!" });
-  }
-
-  if (name.length < 3) {
-    return res.status(400).json({
-      msg: "The team name must be 3 or more characters long!",
-    });
-  }
-
-  if (typeof name !== "string") {
-    return res.status(400).json({
-      msg: "The team name must be a string!",
-    });
-  }
-
   try {
-    // Check if the user already belongs to a team
+    // Verificar si el usuario ya pertenece a un equipo
     const existingUser = await prisma.user.findUnique({
       where: { username },
     });
@@ -58,7 +62,7 @@ export const createNewTeam = async (req, res) => {
       });
     }
 
-    // Check if the team name is already in use
+    // Verificar si el nombre del equipo ya está en uso
     const existingTeam = await prisma.team.findUnique({
       where: { name },
     });
@@ -67,24 +71,47 @@ export const createNewTeam = async (req, res) => {
       return res.status(400).json({ msg: "The team name is already in use." });
     }
 
-    const mimeType = mime.lookup(img);
+    // Validar el tipo de imagen
+    const mimeType = mime.lookup(req.file.originalname);
     const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
-
     if (!validImageTypes.includes(mimeType)) {
       return res.status(400).json({
         msg: "Invalid image format. Please upload a JPEG, PNG, or GIF image.",
       });
     }
-    // Create the new team with the Cloudinary URL
+
+    // Subir la imagen a Cloudinary
+    const result = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: "team_images",
+          public_id: `${Date.now()}-${req.file.originalname}`,
+          format: "png",
+        },
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        }
+      );
+      uploadStream.end(req.file.buffer);
+    });
+
+    const img = result.secure_url;
+
+    // Crear el equipo en la base de datos
     const team = await prisma.team.create({
       data: {
         name,
-        img: req.file.path, // Cloudinary URL is automatically saved here
+        img,
         region,
+        leaderUsername: username,
       },
     });
 
-    // Update the user to assign them to the new team
+    // Actualizar el usuario para asignarlo al nuevo equipo
     const updatedUser = await prisma.user.update({
       where: { username },
       data: { teamId: team.id },
