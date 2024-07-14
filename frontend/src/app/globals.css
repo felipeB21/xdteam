@@ -29,6 +29,9 @@ input {
 form {
   @apply flex flex-col gap-4;
 }
+.ubi-input {
+  @apply p-5 rounded-xl w-[420px] relative pl-14 shadow;
+}
 .mask-img {
   filter: drop-shadow(5px 5px 55px #595858);
 }

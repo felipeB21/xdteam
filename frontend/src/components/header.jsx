@@ -4,7 +4,7 @@ import AlterSessionHeader from "./alterSessionHeader";
 const LINKS = [
   { name: "Create Team", ref: "/create-team" },
   { name: "Find Team", ref: "/teams" },
-  { name: "Players", ref: "/players" },
+  { name: "Players Stats", ref: "/players-stats" },
   { name: "Chat", ref: "/chat" },
 ];
 

@@ -11,6 +11,9 @@ export default function UserPage({ params }) {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCurrentUser, setIsCurrentUser] = useState(false);
+  const [ubiId, setUbiId] = useState("");
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -32,6 +35,7 @@ export default function UserPage({ params }) {
         }
       } catch (error) {
         setUserData(null);
+        setError(error.response?.data?.msg || "An error occurred");
       } finally {
         setIsLoading(false);
       }
@@ -39,6 +43,37 @@ export default function UserPage({ params }) {
 
     fetchUserData();
   }, [params.username]);
+
+  const handleUbiIdChange = (e) => {
+    setUbiId(e.target.value);
+  };
+
+  const handleUbiIdSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const response = await axios.post(
+        `http://localhost:4000/api/v1/user/ubi/id/set/${params.username}`,
+        { ubiId },
+        {
+          headers: {
+            Authorization: `Bearer ${window.localStorage.getItem(
+              "accessToken"
+            )}`,
+          },
+        }
+      );
+      setSuccess(response.data.msg);
+      setUserData((prevData) => ({
+        ...prevData,
+        data: { ...prevData.data, ubiId },
+      }));
+    } catch (error) {
+      setError(error.response?.data?.msg || "An error occurred");
+    }
+  };
 
   return (
     <div className="main-layout">
@@ -48,8 +83,66 @@ export default function UserPage({ params }) {
         </div>
       ) : userData ? (
         <div>
-          <p className="text-2xl font-bold">{userData.data.username}</p>
-          {isCurrentUser ? <p>Es tu cuenta</p> : <p>No es tu cuenta</p>}
+          <p className="text-2xl font-bold mb-3">{userData.data.username}</p>
+          <div>
+            {userData.data.ubiId ? (
+              <Link
+                className="bg-green-500 py-2 px-4 flex items-center gap-2 w-max rounded-xl"
+                href={`/profile/ubi/${userData.data.ubiId}`}
+              >
+                <Image
+                  className="w-auto h-auto"
+                  src={"/Ubisoft_logo.svg.png"}
+                  alt="ubi"
+                  width={30}
+                  height={30}
+                />
+                <p className="text-xl font-bold">{userData.data.ubiId}</p>
+              </Link>
+            ) : (
+              <p>No Ubisoft ID set</p>
+            )}
+          </div>
+          {isCurrentUser &&
+            (userData.data.ubiId ? (
+              <div>
+                <button
+                  onClick={() => setUbiId(userData.data.ubiId)}
+                  className="ubi-edit-button"
+                >
+                  Edit Ubisoft ID
+                </button>
+                <form onSubmit={handleUbiIdSubmit}>
+                  <input
+                    type="text"
+                    id="ubiId"
+                    value={ubiId}
+                    onChange={handleUbiIdChange}
+                    placeholder="Edit your Ubisoft ID"
+                    className="ubi-input"
+                  />
+                  <button type="submit" className="ubi-submit-button">
+                    Save
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <form onSubmit={handleUbiIdSubmit}>
+                <input
+                  type="text"
+                  id="ubiId"
+                  value={ubiId}
+                  onChange={handleUbiIdChange}
+                  placeholder="Set your Ubisoft ID"
+                  className="ubi-input"
+                />
+                <button type="submit" className="ubi-submit-button">
+                  Set Ubisoft ID
+                </button>
+              </form>
+            ))}
+          {error && <p className="text-red-500">{error}</p>}
+          {success && <p className="text-green-500">{success}</p>}
           {userData.data.team && (
             <div className="mt-10">
               <h4 className="text-xl font-bold">Team</h4>

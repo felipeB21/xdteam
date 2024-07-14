@@ -27,8 +27,11 @@ const Login = () => {
           username,
           password,
         },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+        }
       ); // Importante para enviar y recibir cookies
+
       if (response.status === 200) {
         setMessage("");
       } else {

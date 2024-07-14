@@ -6,6 +6,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const refreshAccessToken = async () => {
     try {
@@ -57,10 +58,10 @@ export const AuthProvider = ({ children }) => {
           }
         } else {
           setUser(null);
-          console.error("Failed to verify token:", error);
         }
       }
     }
+    setLoading(false);
   };
 
   const userData = async () => {
@@ -87,8 +88,14 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (!loading) {
+      userData();
+    }
+  }, [loading]);
+
   return (
-    <AuthContext.Provider value={{ user, setUser, data, setData }}>
+    <AuthContext.Provider value={{ user, setUser, data, setData, loading }}>
       {children}
     </AuthContext.Provider>
   );

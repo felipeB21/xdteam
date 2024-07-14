@@ -3,9 +3,17 @@ import { AuthContext } from "@/app/context/AuthContext";
 import React, { useContext } from "react";
 import Link from "next/link";
 import UserOptionHeader from "./userOptionHeader";
+import LoadingIcon from "./icons/loading";
 
 export default function AlterSessionHeader() {
-  const { user } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
+  if (loading) {
+    return (
+      <div className="py-[11px]">
+        <LoadingIcon />
+      </div>
+    );
+  }
   return (
     <div>
       {user ? (
@@ -19,7 +27,7 @@ export default function AlterSessionHeader() {
         <div className="flex items-center gap-3">
           <Link
             href={"/login"}
-            className="py-[8px] px-3 rounded border flex items-center hover:bg-neutral-200 hover:text-black duration-150"
+            className="py-[8px] px-3 rounded border flex items-center hover:bg-white hover:text-black duration-150"
           >
             <p className="font-medium text-sm">Sign in</p>
           </Link>

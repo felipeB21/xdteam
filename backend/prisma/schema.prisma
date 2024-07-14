@@ -20,6 +20,7 @@ model User {
   refreshToken String?   @unique
   team         Team?     @relation(fields: [teamId], references: [id])
   teamId       String?   @db.ObjectId
+  ubiId        String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }

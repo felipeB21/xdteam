@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser());
 const corsOptions = {
-  origin: "http://localhost:3000", // Cambia esto al origen de tu cliente
+  origin: ["http://localhost:3000", "https://api.tracker.gg"], // Cambia esto al origen de tu cliente
   credentials: true, // Habilitar las cookies en las solicitudes CORS
   optionsSuccessStatus: 200, // Para navegadores antiguos que dan problemas con status 204
 };
