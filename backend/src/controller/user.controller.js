@@ -262,6 +262,7 @@ export const findUserByParams = async (req, res) => {
     await prisma.$disconnect();
   }
 };
+
 export const intOfUsers = async (req, res) => {
   try {
     const userCount = await prisma.user.count();

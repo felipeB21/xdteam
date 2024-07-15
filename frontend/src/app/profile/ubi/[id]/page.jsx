@@ -48,7 +48,7 @@ export default function UbiPage({ params }) {
                 alt="banner"
                 fill
               />
-              <div className="absolute mt-52">
+              <div className="relative mt-52">
                 <div className="flex items-center gap-5">
                   <Image
                     className="w-auto h-auto rounded-full border-2"
@@ -61,14 +61,20 @@ export default function UbiPage({ params }) {
                     {userData.platformUserIdentifier}
                   </h4>
                 </div>
-                <Image
-                  priority={true}
-                  className="w-auto h-auto"
-                  src={userRank.metadata.imageUrl}
-                  alt={userRank.value}
-                  width={50}
-                  height={50}
-                />
+                <div className="flex gap-2 mt-5">
+                  <Image
+                    priority={true}
+                    className="w-auto h-auto"
+                    src={userRank.metadata.imageUrl}
+                    alt={userRank.value}
+                    width={34}
+                    height={34}
+                  />
+                  <div>
+                    <p className="text-sm text-neutral-300">Rating</p>
+                    <p className="font-medium">{userRank.displayValue}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

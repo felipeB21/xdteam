@@ -6,6 +6,7 @@ import Image from "next/image";
 import Error from "@/components/error";
 import Link from "next/link";
 import GlobeIcon from "@/components/icons/globe";
+import ArrowDown from "@/components/icons/arrowDown";
 
 export default function UserPage({ params }) {
   const [userData, setUserData] = useState(null);
@@ -14,6 +15,7 @@ export default function UserPage({ params }) {
   const [ubiId, setUbiId] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [isEditingUbiId, setIsEditingUbiId] = useState(false); // Nuevo estado
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -70,6 +72,7 @@ export default function UserPage({ params }) {
         ...prevData,
         data: { ...prevData.data, ubiId },
       }));
+      setIsEditingUbiId(false); // Oculta el formulario después de guardar
     } catch (error) {
       setError(error.response?.data?.msg || "An error occurred");
     }
@@ -86,32 +89,33 @@ export default function UserPage({ params }) {
           <p className="text-2xl font-bold mb-3">{userData.data.username}</p>
           <div>
             {userData.data.ubiId ? (
-              <Link
-                className="bg-green-500 py-2 px-4 flex items-center gap-2 w-max rounded-xl"
-                href={`/profile/ubi/${userData.data.ubiId}`}
-              >
-                <Image
-                  className="w-auto h-auto"
-                  src={"/Ubisoft_logo.svg.png"}
-                  alt="ubi"
-                  width={30}
-                  height={30}
-                />
-                <p className="text-xl font-bold">{userData.data.ubiId}</p>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link
+                  className="bg-green-500 py-2 px-4 flex items-center gap-2 w-max rounded-xl"
+                  href={`/profile/ubi/${userData.data.ubiId}`}
+                >
+                  <Image
+                    className="w-auto h-auto"
+                    src={"/Ubisoft_logo.svg.png"}
+                    alt="ubi"
+                    width={30}
+                    height={30}
+                  />
+                  <p className="text-xl font-bold">{userData.data.ubiId}</p>
+                </Link>
+                {isCurrentUser && (
+                  <button onClick={() => setIsEditingUbiId(!isEditingUbiId)}>
+                    <ArrowDown />
+                  </button>
+                )}
+              </div>
             ) : (
-              <p>No Ubisoft ID set</p>
+              <p className="text-sm text-neutral-300">No Ubisoft ID set</p>
             )}
           </div>
-          {isCurrentUser &&
-            (userData.data.ubiId ? (
-              <div>
-                <button
-                  onClick={() => setUbiId(userData.data.ubiId)}
-                  className="ubi-edit-button"
-                >
-                  Edit Ubisoft ID
-                </button>
+          {isCurrentUser && (
+            <>
+              {isEditingUbiId && (
                 <form onSubmit={handleUbiIdSubmit}>
                   <input
                     type="text"
@@ -121,26 +125,22 @@ export default function UserPage({ params }) {
                     placeholder="Edit your Ubisoft ID"
                     className="ubi-input"
                   />
-                  <button type="submit" className="ubi-submit-button">
-                    Save
-                  </button>
                 </form>
-              </div>
-            ) : (
-              <form onSubmit={handleUbiIdSubmit}>
-                <input
-                  type="text"
-                  id="ubiId"
-                  value={ubiId}
-                  onChange={handleUbiIdChange}
-                  placeholder="Set your Ubisoft ID"
-                  className="ubi-input"
-                />
-                <button type="submit" className="ubi-submit-button">
-                  Set Ubisoft ID
-                </button>
-              </form>
-            ))}
+              )}
+              {!userData.data.ubiId && (
+                <form onSubmit={handleUbiIdSubmit}>
+                  <input
+                    type="text"
+                    id="ubiId"
+                    value={ubiId}
+                    onChange={handleUbiIdChange}
+                    placeholder="Set your Ubisoft ID"
+                    className="ubi-input"
+                  />
+                </form>
+              )}
+            </>
+          )}
           {error && <p className="text-red-500">{error}</p>}
           {success && <p className="text-green-500">{success}</p>}
           {userData.data.team && (
