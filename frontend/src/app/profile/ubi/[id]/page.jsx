@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 export default function UbiPage({ params }) {
   const [userRank, setUserRank] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -17,8 +18,9 @@ export default function UbiPage({ params }) {
         );
         const data = res.data;
         setUserData(data.data.platformInfo);
+        setUserInfo(data.data.userInfo);
         setUserRank(data.data.segments[0].stats.rankStr);
-        setError(null); // Clear any previous errors
+        setError(null);
       } catch (error) {
         setError(error.response?.data?.msg || "An error occurred");
       } finally {
@@ -38,30 +40,49 @@ export default function UbiPage({ params }) {
           <h5>{error}</h5>
         </div>
       ) : (
-        <div>
-          <div className="main-layout mt-60">
-            <div>
+        <div className="main-layout">
+          <Image
+            className="object-cover absolute max-h-[30dvh] top-0"
+            src={"/xdteam_profile.avif"}
+            alt="profile"
+            fill
+          />
+          <div className="relative top-24">
+            <div className="flex items-center gap-5 ">
               <Image
-                priority={true}
-                className="absolute object-cover w-full max-h-[30dvh] mt-14"
-                src={"/XDefiant_src.png"}
-                alt="banner"
-                fill
+                className="w-auto h-auto rounded-full border-2"
+                src={userData.avatarUrl}
+                alt={userData.platformUserIdentifier}
+                width={100}
+                height={100}
               />
-              <div className="relative mt-52">
-                <div className="flex items-center gap-5">
-                  <Image
-                    className="w-auto h-auto rounded-full border-2"
-                    src={userData.avatarUrl}
-                    alt={userData.platformUserIdentifier}
-                    width={100}
-                    height={100}
-                  />
-                  <h4 className="font-medium text-xl">
-                    {userData.platformUserIdentifier}
-                  </h4>
-                </div>
-                <div className="flex gap-2 mt-5">
+
+              <div className="flex items-center gap-2">
+                <h4 className="font-medium text-2xl">
+                  {userData.platformUserIdentifier}
+                </h4>
+                {userInfo.countryCode && (
+                  <div>
+                    <Image
+                      className="w-auto h-auto"
+                      src={`https://flagsapi.com/${userInfo.countryCode}/flat/64.png`}
+                      alt={userInfo.countryCode}
+                      width={20}
+                      height={20}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <section className="mt-32">
+            <h5 className="text-2xl font-bold">Overview</h5>
+            <div className="mt-5">
+              <div className="flex flex-col gap-2 border border-neutral-600 rounded-xl p-3 w-max">
+                <h5 className="text-xl text-neutral-300 font-bold">
+                  Current Rank
+                </h5>
+                <div className="flex gap-2">
                   <Image
                     priority={true}
                     className="w-auto h-auto"
@@ -77,7 +98,7 @@ export default function UbiPage({ params }) {
                 </div>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       )}
     </div>

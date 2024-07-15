@@ -14,6 +14,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "ubisoft-avatars.akamaized.net",
       },
+      {
+        protocol: "https",
+        hostname: "flagsapi.com",
+      },
     ],
   },
 };

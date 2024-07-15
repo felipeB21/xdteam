@@ -72,7 +72,7 @@ export default function UserPage({ params }) {
         ...prevData,
         data: { ...prevData.data, ubiId },
       }));
-      setIsEditingUbiId(false); // Oculta el formulario después de guardar
+      setIsEditingUbiId(false);
     } catch (error) {
       setError(error.response?.data?.msg || "An error occurred");
     }
