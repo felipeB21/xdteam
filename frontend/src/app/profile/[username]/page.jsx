@@ -86,33 +86,70 @@ export default function UserPage({ params }) {
         </div>
       ) : userData ? (
         <div>
-          <p className="text-2xl font-bold mb-3">{userData.data.username}</p>
-          <div>
-            {userData.data.ubiId ? (
-              <div className="flex items-center gap-2">
+          <div className="flex gap-5">
+            {userData.data.team ? (
+              <Image
+                priority
+                className="w-[120px] h-[120px] rounded-full border-2 object-cover"
+                src={userData.data.team.img}
+                alt={`Image of team ${userData.data.team.name}`}
+                width={100}
+                height={100}
+              />
+            ) : (
+              <Image
+                className="w-[120px] h-[120px] rounded-full border-2"
+                src={"/default256.webp"}
+                alt="default-img"
+                width={100}
+                height={100}
+              />
+            )}
+            <div className="flex flex-col gap-1">
+              <p className="text-3xl font-bold">{userData.data.username}</p>
+
+              {userData.data.team ? (
                 <Link
-                  className="bg-green-500 py-2 px-4 flex items-center gap-2 w-max rounded-xl"
-                  href={`/profile/ubi/${userData.data.ubiId}`}
+                  className="text-sm hover:underline"
+                  href={`/team/${userData.data.team.id}/${userData.data.team.name}`}
                 >
-                  <Image
-                    className="w-auto h-auto"
-                    src={"/Ubisoft_logo.svg.png"}
-                    alt="ubi"
-                    width={30}
-                    height={30}
-                  />
-                  <p className="text-xl font-bold">{userData.data.ubiId}</p>
+                  {userData.data.team.name}
                 </Link>
-                {isCurrentUser && (
-                  <button onClick={() => setIsEditingUbiId(!isEditingUbiId)}>
-                    <ArrowDown />
-                  </button>
+              ) : (
+                <p className="text-sm text-neutral-300">No team</p>
+              )}
+
+              <div>
+                {userData.data.ubiId ? (
+                  <div className="flex items-center gap-2">
+                    <Link
+                      className="bg-green-100 py-1 px-2 text-black flex items-center gap-2 w-max rounded-xl"
+                      href={`/profile/ubi/${userData.data.ubiId}`}
+                    >
+                      <Image
+                        className="w-auto h-auto"
+                        src={"/Ubisoft_logo.svg.png"}
+                        alt="ubi"
+                        width={15}
+                        height={15}
+                      />
+                      <p className="font-bold">{userData.data.ubiId}</p>
+                    </Link>
+                    {isCurrentUser && (
+                      <button
+                        onClick={() => setIsEditingUbiId(!isEditingUbiId)}
+                      >
+                        <ArrowDown />
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm text-neutral-300">No Ubisoft ID set</p>
                 )}
               </div>
-            ) : (
-              <p className="text-sm text-neutral-300">No Ubisoft ID set</p>
-            )}
+            </div>
           </div>
+
           {isCurrentUser && (
             <>
               {isEditingUbiId && (
@@ -143,31 +180,6 @@ export default function UserPage({ params }) {
           )}
           {error && <p className="text-red-500">{error}</p>}
           {success && <p className="text-green-500">{success}</p>}
-          {userData.data.team && (
-            <div className="mt-10">
-              <h4 className="text-xl font-bold">Team</h4>
-              <Link
-                href={`/team/${userData.data.team.id}/${userData.data.team.name}`}
-                className="flex items-center gap-2 mt-2 border border-neutral-700 py-1 px-2 w-max rounded-xl hover:bg-neutral-900 duration-200"
-              >
-                <Image
-                  priority
-                  className="w-50 h-50 object-cover rounded-full"
-                  src={userData.data.team.img}
-                  alt={`Image of team ${userData.data.team.name}`}
-                  width={50}
-                  height={50}
-                />
-                <div>
-                  <p className="font-medium">{userData.data.team.name}</p>
-                  <p className="text-neutral-300 text-xs flex items-center gap-1">
-                    <GlobeIcon />
-                    {userData.data.team.region}
-                  </p>
-                </div>
-              </Link>
-            </div>
-          )}
         </div>
       ) : (
         <Error />

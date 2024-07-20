@@ -19,7 +19,8 @@
     "react-countup": "^6.5.3",
     "react-dom": "^18",
     "react-select": "^5.8.0",
-    "tailwind-merge": "^2.3.0",
+    "recharts": "^2.12.7",
+    "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {

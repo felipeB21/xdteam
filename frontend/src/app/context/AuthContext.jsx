@@ -51,7 +51,6 @@ export const AuthProvider = ({ children }) => {
               setUser(response.data.username);
             } catch (error) {
               setUser(null);
-              console.error("Failed to verify token after refresh:", error);
             }
           } else {
             setUser(null);

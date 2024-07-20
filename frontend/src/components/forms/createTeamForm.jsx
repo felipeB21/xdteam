@@ -39,7 +39,8 @@ export default function CreateTeamForm() {
       setMessage(res.data.msg);
       router.push(`/team/${res.data.data.team.id}/${res.data.data.team.name}`);
     } catch (error) {
-      setMessage(error.response?.data?.msg || "Error creating team");
+      console.log(error);
+      setMessage(error.response?.data?.msg);
     }
   };
 
@@ -64,7 +65,7 @@ export default function CreateTeamForm() {
 
   return (
     <div className="mt-5 flex justify-between">
-      <div className="flex flex-col w-[20dvw]">
+      <div className="flex flex-col w-max">
         <form onSubmit={handleForm}>
           <input
             autoComplete="off"

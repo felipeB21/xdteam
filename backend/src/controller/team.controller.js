@@ -20,9 +20,9 @@ export const createNewTeam = async (req, res) => {
   }
 
   // Validar longitud del nombre del equipo
-  if (name.length < 3) {
+  if (name.length < 3 || name.length > 20) {
     return res.status(400).json({
-      msg: "The team name must be 3 or more characters long!",
+      msg: "The team name must be 3 to 20 characters long!",
     });
   }
 
@@ -30,6 +30,13 @@ export const createNewTeam = async (req, res) => {
   if (typeof name !== "string") {
     return res.status(400).json({
       msg: "The team name must be a string!",
+    });
+  }
+
+  const teamRegex = /^[a-zA-Z0-9_]+$/;
+  if (!teamRegex.test(name)) {
+    return res.status(400).json({
+      msg: "Name can only contain letters, numbers, and underscores, and cannot contain spaces or special characters like /@?.",
     });
   }
 
@@ -263,7 +270,6 @@ export const deleteTeam = async (req, res) => {
         .json({ msg: "User is not authorized to delete this team" });
     }
 
-    // Delete the team
     await prisma.team.delete({
       where: { name: teamToDelete },
     });

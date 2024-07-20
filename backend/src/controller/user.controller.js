@@ -34,6 +34,13 @@ export const createNewUser = async (req, res) => {
         .json({ msg: "Confirm password must be same as Password." });
     }
 
+    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    if (!usernameRegex.test(username)) {
+      return res.status(400).json({
+        msg: "Username can only contain letters, numbers, and underscores, and cannot contain spaces or special characters like /@?.",
+      });
+    }
+
     const hashedPassword = await hash(password, 10);
 
     const accessToken = jwt.sign(
@@ -357,6 +364,7 @@ export const setUbiId = async (req, res) => {
   const { username } = req.params;
 
   try {
+    // Verificar si el usuario existe
     const user = await prisma.user.findUnique({
       where: { username },
       select: {
@@ -366,14 +374,36 @@ export const setUbiId = async (req, res) => {
       },
     });
 
-    if (!user) return res.status(400).json({ msg: "Invalid user." });
-    if (!ubiId)
+    if (!user) {
+      return res.status(400).json({ msg: "Invalid user." });
+    }
+
+    if (!ubiId) {
       return res.status(400).json({ msg: "The Ubisoft ID can't be empty." });
-    if (user.ubiId === ubiId)
+    }
+
+    if (user.ubiId === ubiId) {
       return res
         .status(400)
         .json({ msg: "This Ubisoft account is already claimed." });
+    }
 
+    // Verificar si el ubiId ya está en uso por otro usuario
+    const existingUbiIdUser = await prisma.user.findFirst({
+      where: { ubiId },
+      select: {
+        id: true,
+        username: true,
+      },
+    });
+
+    if (existingUbiIdUser) {
+      return res
+        .status(400)
+        .json({ msg: "This Ubisoft account is already claimed." });
+    }
+
+    // Actualizar el ubiId del usuario
     const setId = await prisma.user.update({
       where: { username },
       data: { ubiId },

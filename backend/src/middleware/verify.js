@@ -8,7 +8,7 @@ export const verifyJWT = (req, res, next) => {
   if (!token) return res.status(401).json({ msg: "Malformed token!" });
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-    if (err) return res.status(401).json({ message: "Invalid token" });
+    if (err) return res.status(401).json({ msg: "You have to sign in first!" });
     req.user = decoded.username;
     next();
   });
